@@ -20,6 +20,8 @@
         docEle.style.fontSize = props.fontSize * (clientWidth / props.width) + 'px'
       }
 
+      refreshRem()
+
       window.addEventListener(resizeEvt, function () {
         clearTimeout(refreshRem.tid)
         refreshRem.tid = setTimeout(refreshRem, 300)

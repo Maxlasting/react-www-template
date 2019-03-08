@@ -11,3 +11,5 @@ npm-debug.log*
 *.sln
 
 /dist/
+
+package-lock.json

@@ -19,11 +19,7 @@ const config = merge(loaderConfig, {
   performance: {
     hints: false
   },
-  resolve: {
-    alias: {
-      'create-app': join(__dirname, '../src/app.js')
-    }
-  },
+  resolve: {},
   plugins: [
     new HtmlWebpackPlugin({
       filename: 'index.html',
