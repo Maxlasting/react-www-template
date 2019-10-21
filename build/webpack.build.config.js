@@ -1,44 +1,47 @@
 const webpack = require('webpack')
 const merge = require('webpack-merge')
-const WebpackProgressOraPlugin = require('webpack-progress-ora-plugin')
-const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin')
 const baseConfig = require('./webpack.base.config.js')
+const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin')
+const WebpackProgressOraPlugin = require('webpack-progress-ora-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const CleanWebpackPlugin = require('clean-webpack-plugin')
 
-const nodeEnv = process.env.NODE_ENV
+const userConfig = require('../config.js')
 
-console.log(`当前环境变量 ======> ${nodeEnv}`)
-
-const config = merge(baseConfig, {
+module.exports = merge(baseConfig, {
+  output: {
+    filename: 'assets/scripts/[name].[chunkhash].js',
+    publicPath: userConfig.build.publicPath
+  },
+  devtool: 'cheap-module-source-map',
   optimization: {
     splitChunks: {
-      chunks: 'all'
+      chunks: 'all',
     },
-    runtimeChunk: {
-      name: 'manifest'
-    }
   },
-  devtool: false,
   plugins: [
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(nodeEnv)
-    }),
-    new WebpackProgressOraPlugin({ clear: true }),
-    new webpack.NamedChunksPlugin()
-  ]
-})
-
-if (nodeEnv === 'production') {
-  config.output.filename = '[name].js?fq-[chunkhash]'
-
-  config.plugins.push(
     new OptimizeCssAssetsWebpackPlugin({
+      assetNameRegExp: /\.css(\?.*)?$/,
       cssProcessor: require('cssnano'),
-      cssProcessorOptions: {
-        discardComments: { removeAll: true }
+      cssProcessorPluginOptions: {
+        preset: [
+          'default',
+          {
+            discardComments: { removeAll: true }
+          }
+        ]
       },
-      canPrint: true
-    })
-  )
-}
-
-module.exports = config
+      canPrint: true,
+    }),
+    new WebpackProgressOraPlugin({
+      clear: true,
+    }),
+    new MiniCssExtractPlugin({
+      filename: 'assets/styles/[name].[contenthash].css'
+    }),
+    new CleanWebpackPlugin({
+      cleanOnceBeforeBuildPatterns: ['**/*'],
+    }),
+    new webpack.NamedChunksPlugin(),
+  ],
+})

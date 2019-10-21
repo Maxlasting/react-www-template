@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from 'create-app'
+import App from '@views/app'
 
 ReactDOM.render(
   <App/>,
